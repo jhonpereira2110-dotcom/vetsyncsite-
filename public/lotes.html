@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Lotes - VetSync</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7f9;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            color: #0a7c4a;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            background: #0a7c4a;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #08663d;
+        }
+
+        .item {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .voltar {
+            display: inline-block;
+            margin-top: 20px;
+            color: #0a7c4a;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Cadastro de Lotes</h1>
+
+        <label for="fazendaSelect">Fazenda</label>
+        <select id="fazendaSelect"></select>
+
+        <label for="nomeLote">Nome do Lote</label>
+        <input type="text" id="nomeLote" placeholder="Ex.: Vacas Paridas">
+
+        <label for="quantidade">Quantidade de Animais</label>
+        <input type="number" id="quantidade" placeholder="Ex.: 85">
+
+        <button onclick="salvarLote()">Salvar Lote</button>
+
+        <h2>Lotes Cadastrados</h2>
+        <div id="listaLotes"></div>
+
+        <a class="voltar" href="/">← Voltar ao início</a>
+    </div>
+
+    <script>
+        const fazendas = JSON.parse(localStorage.getItem('fazendas')) || [];
+        let lotes = JSON.parse(localStorage.getItem('lotes')) || [];
+
+        function carregarFazendas() {
+            const select = document.getElementById('fazendaSelect');
+            select.innerHTML = '';
+
+            if (fazendas.length === 0) {
+                const option = document.createElement('option');
+                option.textContent = 'Nenhuma fazenda cadastrada';
+                select.appendChild(option);
+                select.disabled = true;
+                return;
+            }
+
+            select.disabled = false;
+
+            fazendas.forEach(function (fazenda, indice) {
+                const option = document.createElement('option');
+                option.value = indice;
+                option.textContent = fazenda.nome;
+                select.appendChild(option);
+            });
+        }
+
+        function salvarLote() {
+            if (fazendas.length === 0) {
+                alert('Cadastre uma fazenda primeiro.');
+                return;
+            }
+
+            const indiceFazenda = parseInt(
+                document.getElementById('fazendaSelect').value,
+                10
+            );
+
+            const nomeLote = document.getElementById('nomeLote').value.trim();
+            const quantidade =
+                document.getElementById('quantidade').value || '0';
+
+            if (!nomeLote) {
+                alert('Digite o nome do lote.');
+                return;
+            }
+
+            const lote = {
+                fazenda: fazendas[indiceFazenda].nome,
+                nome: nomeLote,
+                quantidade: quantidade
+            };
+
+            lotes.push(lote);
+            localStorage.setItem('lotes', JSON.stringify(lotes));
+
+            document.getElementById('nomeLote').value = '';
+            document.getElementById('quantidade').value = '';
+
+            mostrarLotes();
+        }
+
+        function excluirLote(indice) {
+            if (confirm('Deseja excluir este lote?')) {
+                lotes.splice(indice, 1);
+                localStorage.setItem('lotes', JSON.stringify(lotes));
+                mostrarLotes();
+            }
+        }
+
+        function mostrarLotes() {
+            const lista = document.getElementById('listaLotes');
+            lista.innerHTML = '';
+
+            if (lotes.length === 0) {
+                lista.innerHTML = '<p>Nenhum lote cadastrado.</p>';
+                return;
+            }
+
+            lotes.forEach(function (lote, indice) {
+                const div = document.createElement('div');
+                div.className = 'item';
+
+                div.innerHTML =
+                    '<strong>' + lote.nome + '</strong><br>' +
+                    'Fazenda: ' + lote.fazenda + '<br>' +
+                    'Quantidade: ' + lote.quantidade + ' animais<br><br>' +
+                    '<button onclick="excluirLote(' + indice + ')">Excluir</button>';
+
+                lista.appendChild(div);
+            });
+        }
+
+        carregarFazendas();
+        mostrarLotes();
+    </script>
+</body>
+
+</html>
