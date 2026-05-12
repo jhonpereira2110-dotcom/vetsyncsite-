@@ -10,3 +10,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.listen(PORT, () => {
     console.log('Servidor rodando em http://localhost:3000');
 });
+
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js")
+        .then(() => console.log("SW registrado"))
+        .catch(err => console.log("Erro SW:", err));
+}
