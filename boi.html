@@ -2,377 +2,48 @@
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Boi/Sêmen - VetSync</title>
-
+    <title>BOI</title>
+    <link rel="manifest" href="./manifest.json">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
         body {
-            background: #f4f7f9;
-        }
-
-        header {
-
-            background: linear-gradient(135deg, #0a7c4a, #13a563);
+            font-family: Arial;
+            background: #111;
             color: white;
-            padding: 35px;
-
-        }
-
-        header h1 {
-            font-size: 42px;
-        }
-
-        nav {
-
-            background: #08663d;
-            padding: 18px;
-            display: flex;
-            gap: 30px;
-
-        }
-
-        nav a {
-
-            color: white;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: bold;
-
-        }
-
-        .container {
-
-            max-width: 1200px;
-            margin: auto;
-            padding: 30px;
-
-        }
-
-        .box {
-
-            background: white;
-            border-radius: 18px;
-            padding: 30px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-
-        }
-
-        .box h2 {
-
-            color: #0a7c4a;
-            margin-bottom: 20px;
-
-        }
-
-        input,
-        textarea {
-
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-
-        }
-
-        textarea {
-
-            min-height: 100px;
-            resize: vertical;
-
+            padding: 20px;
         }
 
         button {
-
-            background: #0a7c4a;
-            color: white;
+            padding: 15px;
+            width: 100%;
             border: none;
-            padding: 14px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-
-        }
-
-        button:hover {
-
-            background: #08663d;
-
-        }
-
-        .lista {
-
-            display: grid;
-            grid-template-columns:
-                repeat(auto-fit, minmax(320px, 1fr));
-
-            gap: 20px;
-
-        }
-
-        .card {
-
-            background: white;
-            padding: 25px;
-            border-radius: 18px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-left: 8px solid #0a7c4a;
-
-        }
-
-        .card h3 {
-
-            color: #0a7c4a;
-            margin-bottom: 15px;
-
-        }
-
-        .btn-excluir {
-
-            background: #d9534f;
+            border-radius: 10px;
+            background: #222;
+            color: white;
             margin-top: 15px;
-
         }
 
-        .btn-excluir:hover {
-
-            background: #b52b27;
-
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
         }
     </style>
-
 </head>
 
 <body>
 
-    <header>
+    <h1>BOI</h1>
 
-        <h1>🐂 Boi / Sêmen</h1>
+    <input type="text" placeholder="Nome do boi">
+    <input type="number" placeholder="Peso">
 
-    </header>
+    <button>Salvar</button>
 
-    <nav>
-
-        <a href="/">Dashboard</a>
-
-        <a href="/fazendas.html">
-            Fazendas
-        </a>
-
-        <a href="/boi.html">
-            Boi/Sêmen
-        </a>
-
-    </nav>
-
-    <div class="container">
-
-        <div class="box">
-
-            <h2>Cadastrar Touro</h2>
-
-            <input type="text" id="nome" placeholder="Nome do touro">
-
-            <input type="text" id="raca" placeholder="Raça">
-
-            <input type="text" id="central" placeholder="Central de sêmen">
-
-            <textarea id="obs" placeholder="Observações"></textarea>
-
-            <button onclick="salvarTouro()">
-
-                Salvar Touro
-
-            </button>
-
-        </div>
-
-        <div class="lista" id="listaTouros">
-
-        </div>
-
-    </div>
-
-    <script>
-
-        function salvarTouro() {
-
-            let touros =
-                JSON.parse(
-                    localStorage.getItem('touros')
-                ) || [];
-
-            const nome =
-                document.getElementById(
-                    'nome'
-                ).value;
-
-            const raca =
-                document.getElementById(
-                    'raca'
-                ).value;
-
-            const central =
-                document.getElementById(
-                    'central'
-                ).value;
-
-            const obs =
-                document.getElementById(
-                    'obs'
-                ).value;
-
-            if (!nome) {
-
-                alert('Digite o nome');
-                return;
-
-            }
-
-            const touro = {
-
-                nome: nome,
-                raca: raca,
-                central: central,
-                obs: obs
-
-            };
-
-            touros.push(touro);
-
-            localStorage.setItem(
-                'touros',
-                JSON.stringify(touros)
-            );
-
-            document.getElementById(
-                'nome'
-            ).value = '';
-
-            document.getElementById(
-                'raca'
-            ).value = '';
-
-            document.getElementById(
-                'central'
-            ).value = '';
-
-            document.getElementById(
-                'obs'
-            ).value = '';
-
-            mostrarTouros();
-
-        }
-
-        function excluirTouro(indice) {
-
-            if (
-                !confirm(
-                    'Excluir touro?'
-                )
-            ) {
-                return;
-            }
-
-            let touros =
-                JSON.parse(
-                    localStorage.getItem('touros')
-                ) || [];
-
-            touros.splice(indice, 1);
-
-            localStorage.setItem(
-                'touros',
-                JSON.stringify(touros)
-            );
-
-            mostrarTouros();
-
-        }
-
-        function mostrarTouros() {
-
-            const lista =
-                document.getElementById(
-                    'listaTouros'
-                );
-
-            lista.innerHTML = '';
-
-            const touros =
-                JSON.parse(
-                    localStorage.getItem('touros')
-                ) || [];
-
-            touros.forEach(function (
-                touro,
-                indice
-            ) {
-
-                const div =
-                    document.createElement('div');
-
-                div.className = 'card';
-
-                div.innerHTML = `
-
-                    <h3>
-                        ${touro.nome}
-                    </h3>
-
-                    <strong>Raça:</strong>
-                    ${touro.raca}
-
-                    <br><br>
-
-                    <strong>Central:</strong>
-                    ${touro.central}
-
-                    <br><br>
-
-                    <strong>Observações:</strong>
-
-                    <br>
-
-                    ${touro.obs}
-
-                    <button
-                        class="btn-excluir"
-                        onclick="
-                            excluirTouro(
-                                ${indice}
-                            )
-                        "
-                    >
-
-                        Excluir
-
-                    </button>
-
-                `;
-
-                lista.appendChild(div);
-
-            });
-
-        }
-
-        mostrarTouros();
-
-    </script>
+    <button onclick="window.location.href='./index.html'">
+        Voltar
+    </button>
 
 </body>
 

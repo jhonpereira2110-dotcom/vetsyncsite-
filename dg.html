@@ -4,259 +4,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DG por Lote - VetSync</title>
-
+    <title>DG</title>
+    <link rel="manifest" href="./manifest.json">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f7f9;
-            margin: 0;
-            padding: 30px;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        h1,
-        h2 {
-            color: #0a7c4a;
-        }
-
-        label {
-            display: block;
-            margin-top: 15px;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
+            font-family: Arial;
+            background: #111;
+            color: white;
+            padding: 20px;
         }
 
         button {
-            background: #0a7c4a;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background: #08663d;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-            border-left: 8px solid #0a7c4a;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-        }
-
-        .resumo {
-            background: #eef8f2;
-            border: 1px solid #cfe9d8;
             padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            background: #222;
+            color: white;
+            margin-top: 15px;
         }
     </style>
-
 </head>
 
 <body>
 
-    <div class="container">
+    <h1>DG</h1>
 
-        <h1>DG por Lote</h1>
+    <button>Adicionar DG</button>
 
-        <div class="resumo" id="resumo"></div>
-
-        <label>Lote</label>
-        <input type="text" id="lote">
-
-        <label>Quantidade Inseminada</label>
-        <input type="number" id="inseminadas">
-
-        <label>Quantidade Prenha</label>
-        <input type="number" id="prenhas">
-
-        <label>Quantidade Vazia</label>
-        <input type="number" id="vazias">
-
-        <button onclick="salvarDG()">
-            Salvar DG
-        </button>
-
-        <h2>Resultados dos Lotes</h2>
-
-        <div id="lista"></div>
-
-    </div>
-
-    <script>
-
-        function salvarDG() {
-
-            let dgs =
-                JSON.parse(localStorage.getItem('dgs')) || [];
-
-            const lote =
-                document.getElementById('lote').value;
-
-            const inseminadas =
-                parseInt(
-                    document.getElementById('inseminadas').value
-                ) || 0;
-
-            const prenhas =
-                parseInt(
-                    document.getElementById('prenhas').value
-                ) || 0;
-
-            const vazias =
-                parseInt(
-                    document.getElementById('vazias').value
-                ) || 0;
-
-            const aguardando =
-                inseminadas - (prenhas + vazias);
-
-            const taxa =
-                inseminadas > 0
-                    ? ((prenhas / inseminadas) * 100).toFixed(1)
-                    : 0;
-
-            const dg = {
-
-                lote,
-                inseminadas,
-                prenhas,
-                vazias,
-                aguardando,
-                taxa
-
-            };
-
-            dgs.push(dg);
-
-            localStorage.setItem(
-                'dgs',
-                JSON.stringify(dgs)
-            );
-
-            limparCampos();
-
-            mostrarDGs();
-
-            alert('DG do lote salvo.');
-
-        }
-
-        function mostrarDGs() {
-
-            const lista =
-                document.getElementById('lista');
-
-            const resumo =
-                document.getElementById('resumo');
-
-            const dgs =
-                JSON.parse(localStorage.getItem('dgs')) || [];
-
-            lista.innerHTML = '';
-
-            let totalInseminadas = 0;
-            let totalPrenhas = 0;
-            let totalVazias = 0;
-            let totalAguardando = 0;
-
-            dgs.forEach(function (dg) {
-
-                totalInseminadas += dg.inseminadas;
-                totalPrenhas += dg.prenhas;
-                totalVazias += dg.vazias;
-                totalAguardando += dg.aguardando;
-
-                const div =
-                    document.createElement('div');
-
-                div.className = 'card';
-
-                div.innerHTML = `
-                    <strong>Lote:</strong> ${dg.lote}<br><br>
-
-                    <strong>Inseminadas:</strong>
-                    ${dg.inseminadas}<br>
-
-                    <strong>Prenhas:</strong>
-                    ${dg.prenhas}<br>
-
-                    <strong>Vazias:</strong>
-                    ${dg.vazias}<br>
-
-                    <strong>Aguardando DG:</strong>
-                    ${dg.aguardando}<br>
-
-                    <strong>Taxa de Prenhez:</strong>
-                    ${dg.taxa}%<br>
-                `;
-
-                lista.appendChild(div);
-
-            });
-
-            const taxaGeral =
-                totalInseminadas > 0
-                    ? ((totalPrenhas / totalInseminadas) * 100)
-                        .toFixed(1)
-                    : 0;
-
-            resumo.innerHTML = `
-                <strong>Total Inseminadas:</strong>
-                ${totalInseminadas}<br>
-
-                <strong>Total Prenhas:</strong>
-                ${totalPrenhas}<br>
-
-                <strong>Total Vazias:</strong>
-                ${totalVazias}<br>
-
-                <strong>Total Aguardando DG:</strong>
-                ${totalAguardando}<br>
-
-                <strong>Taxa Geral:</strong>
-                ${taxaGeral}%<br>
-            `;
-
-        }
-
-        function limparCampos() {
-
-            document.getElementById('lote').value = '';
-            document.getElementById('inseminadas').value = '';
-            document.getElementById('prenhas').value = '';
-            document.getElementById('vazias').value = '';
-
-        }
-
-        window.onload = mostrarDGs;
-
-    </script>
+    <button onclick="window.location.href='./index.html'">
+        Voltar
+    </button>
 
 </body>
 

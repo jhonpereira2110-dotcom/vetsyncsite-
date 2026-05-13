@@ -4,279 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protocolos de IATF - VetSync</title>
-
+    <title>IATF</title>
+    <link rel="manifest" href="./manifest.json">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f7f9;
-            margin: 0;
-            padding: 30px;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        h1,
-        h2 {
-            color: #0a7c4a;
-        }
-
-        label {
-            display: block;
-            margin-top: 10px;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-
-        textarea {
-            min-height: 100px;
-            resize: vertical;
+            font-family: Arial;
+            background: #111;
+            color: white;
+            padding: 20px;
         }
 
         button {
-            background: #0a7c4a;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-right: 8px;
-        }
-
-        button:hover {
-            background: #08663d;
-        }
-
-        .item {
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 8px;
             padding: 15px;
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            background: #222;
+            color: white;
             margin-top: 15px;
-        }
-
-        .voltar {
-            display: inline-block;
-            margin-top: 20px;
-            color: #0a7c4a;
-            text-decoration: none;
-            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Protocolos de IATF</h1>
 
-        <label for="loteSelect">Lote</label>
-        <select id="loteSelect"></select>
+    <h1>IATF</h1>
 
-        <label for="touroSelect">Touro / Sêmen</label>
-        <select id="touroSelect"></select>
+    <button>Adicionar IATF</button>
 
-        <label for="protocolo">Protocolo</label>
-        <input type="text" id="protocolo">
+    <button onclick="window.location.href='./index.html'">
+        Voltar
+    </button>
 
-        <label for="dataInicio">Data de Início</label>
-        <input type="date" id="dataInicio">
-
-        <label for="dataIATF">Data da IATF</label>
-        <input type="date" id="dataIATF">
-
-        <label for="observacoes">Observações</label>
-        <textarea id="observacoes"></textarea>
-
-        <button onclick="salvarProtocolo()">Salvar Protocolo</button>
-
-        <h2>Protocolos Cadastrados</h2>
-        <div id="listaProtocolos"></div>
-
-        <a class="voltar" href="/">← Voltar ao Dashboard</a>
-    </div>
-
-    <script>
-        const lotes = JSON.parse(localStorage.getItem('lotes')) || [];
-        let touros = JSON.parse(localStorage.getItem('touros')) || [];
-        let protocolos = JSON.parse(localStorage.getItem('protocolos')) || [];
-
-        function carregarLotes() {
-            const select = document.getElementById('loteSelect');
-            select.innerHTML = '';
-
-            if (lotes.length === 0) {
-                select.innerHTML = '<option>Nenhum lote cadastrado</option>';
-                select.disabled = true;
-                return;
-            }
-
-            select.disabled = false;
-
-            lotes.forEach(function (lote, indice) {
-                const option = document.createElement('option');
-                option.value = indice;
-                option.textContent = lote.fazenda + ' - ' + lote.nome;
-                select.appendChild(option);
-            });
-        }
-
-        function carregarTouros() {
-            const select = document.getElementById('touroSelect');
-            select.innerHTML = '';
-
-            const disponiveis = touros.filter(function (touro) {
-                return touro.doses > 0;
-            });
-
-            if (disponiveis.length === 0) {
-                select.innerHTML = '<option>Sem doses disponíveis</option>';
-                select.disabled = true;
-                return;
-            }
-
-            select.disabled = false;
-
-            disponiveis.forEach(function (touro) {
-                const option = document.createElement('option');
-                option.value = touro.nome;
-                option.textContent =
-                    touro.nome + ' (' + touro.doses + ' doses)';
-                select.appendChild(option);
-            });
-        }
-
-        function salvarProtocolo() {
-            if (lotes.length === 0) {
-                alert('Cadastre um lote primeiro.');
-                return;
-            }
-
-            const indiceLote = parseInt(
-                document.getElementById('loteSelect').value,
-                10
-            );
-
-            const nomeTouro =
-                document.getElementById('touroSelect').value;
-
-            const protocolo =
-                document.getElementById('protocolo').value.trim();
-
-            const dataInicio =
-                document.getElementById('dataInicio').value;
-
-            const dataIATF =
-                document.getElementById('dataIATF').value;
-
-            const observacoes =
-                document.getElementById('observacoes').value.trim();
-
-            if (!protocolo) {
-                alert('Digite o nome do protocolo.');
-                return;
-            }
-
-            const indiceTouro = touros.findIndex(function (touro) {
-                return touro.nome === nomeTouro;
-            });
-
-            if (indiceTouro >= 0 && touros[indiceTouro].doses > 0) {
-                touros[indiceTouro].doses -= 1;
-                localStorage.setItem('touros', JSON.stringify(touros));
-            }
-
-            const item = {
-                fazenda: lotes[indiceLote].fazenda,
-                lote: lotes[indiceLote].nome,
-                touro: nomeTouro,
-                protocolo: protocolo,
-                dataInicio: dataInicio,
-                dataIATF: dataIATF,
-                observacoes: observacoes
-            };
-
-            protocolos.push(item);
-            localStorage.setItem('protocolos', JSON.stringify(protocolos));
-
-            document.getElementById('protocolo').value = '';
-            document.getElementById('dataInicio').value = '';
-            document.getElementById('dataIATF').value = '';
-            document.getElementById('observacoes').value = '';
-
-            carregarTouros();
-            mostrarProtocolos();
-        }
-
-        function excluirProtocolo(indice) {
-            const confirmar = confirm(
-                'Deseja excluir este protocolo?'
-            );
-
-            if (!confirmar) {
-                return;
-            }
-
-            protocolos.splice(indice, 1);
-            localStorage.setItem(
-                'protocolos',
-                JSON.stringify(protocolos)
-            );
-
-            mostrarProtocolos();
-        }
-
-        function mostrarProtocolos() {
-            const lista = document.getElementById('listaProtocolos');
-            lista.innerHTML = '';
-
-            if (protocolos.length === 0) {
-                lista.innerHTML =
-                    '<p>Nenhum protocolo cadastrado.</p>';
-                return;
-            }
-
-            protocolos.forEach(function (item, indice) {
-                const div = document.createElement('div');
-                div.className = 'item';
-
-                div.innerHTML =
-                    '<strong>' + item.protocolo + '</strong><br>' +
-                    'Fazenda: ' + item.fazenda + '<br>' +
-                    'Lote: ' + item.lote + '<br>' +
-                    'Touro: ' + item.touro + '<br>' +
-                    'Início: ' + (item.dataInicio || '-') + '<br>' +
-                    'Data IATF: ' + (item.dataIATF || '-') + '<br>' +
-                    'Observações: ' + (item.observacoes || '-') + '<br><br>' +
-                    '<button onclick="excluirProtocolo(' + indice + ')">Excluir</button>';
-
-                lista.appendChild(div);
-            });
-        }
-
-        carregarLotes();
-        carregarTouros();
-        mostrarProtocolos();
-    </script>
 </body>
 
 </html>
